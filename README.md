@@ -8,7 +8,7 @@ For competent advice contact [Nortek](https://www.nortekgroup.com/), [Hydroid Se
 
 ### Contents of this repo
 
-- Unofficial manual for testing and operating the AD2CP glider (mardown and pdf versions in `manual`). Or read it in a wepage here
+- Unofficial manual for testing and operating the AD2CP glider (mardown and pdf versions in `manual`). Or read it on github [here](https://github.com/callumrollo/adcp-glider-guide/blob/main/manual/adcp-glider-manual.pdf)
 - Links to Nortek manuals and software for the Signature 1000 instrument on which the glider AD2CP is based (in the manual)
 - Bash and python scripts for interpreting the data quality snippet files returned by the glider (in `tele_file_parsers`)
 
