@@ -1,0 +1,169 @@
+<h1 id="quick-start-guide-seaglider-ad2cp">Quick Start Guide Seaglider AD2CP</h1>
+<p>Last updated September 2020. For the most recent version and link to supporting software and documentation visit:</p>
+<p>https://github.com/callumrollo/adcp-glider-guide</p>
+<p>This informal guide was compiled using information from the Nortek Signature manuals, in particular the Integrator’s Guide, correspondence with Nortek and Seaglider support teams (now Hydroid, previously Kongsberg) support teams, published data from previous integrations on the Seaglider and Spray platforms, and personal experience working with the system 2018-2020. This guide comes with no warranty, guarantees of competence, or support. In following this guide you may irreparably damage your glider, sensor, computer, lab, person etc. The author assumes no responsibility. Please don’t sue me, I’m poor.</p>
+<p>For qualified and competent tech support contact:</p>
+<p>support@nortekgroup.com</p>
+<p>seaglidersupport@hydroid.com</p>
+<h3 id="to-start-the-ad2cp-for-bench-testing-you-will-need">To start the AD2CP for bench testing you will need:</h3>
+<ul>
+<li><strong>AD2CP Signature Deployment and MIDAS software</strong></li>
+</ul>
+<p>https://www.nortekgroup.com/software (Windows only)</p>
+<ul>
+<li><p><strong>AD2CP manuals “Signature Operations” and “AD2CP Integrator’s Guide”</strong></p>
+<p>https://www.nortekgroup.com/manuals-quick-guides</p></li>
+<li><p><strong>Powered ethernet to standard subsea 8 pin cable</strong> (included in glider case)</p></li>
+</ul>
+<p>The Nortek website is the authoritative source for all information regarding the AD2CP and should be checked for the latest software and manuals.</p>
+<h3 id="connect-to-the-ad2cp">Connect to the AD2CP</h3>
+<ol type="1">
+<li>Ensure that both glider and ethernet cable are powered <strong>off</strong>. It is not necessary to disconnect the AD2CP to glider serial cable at the port marked “R”</li>
+<li>Remove the dummy plug and connect the 8 pin cable to the starboard port of the AD2CP, the port is marked “E” for ethernet. <strong>Note</strong> the serial and ethernet ports on the glider AD2CP are the opposite way round to that shown in the Signature 1000 guide.</li>
+<li>Connect the ethernet cable to your windows computer.</li>
+<li>Connect the power supply and power the cable. The ethernet port on your computer should light up. The light on the AD2CP should turn on.</li>
+<li>Open the Signature Deployment software and wait 1-2 minutes for the AD2CP to assign an IP address.</li>
+<li>In Signature Deployment select menu option “Discover,” you should see a line of data appear with the sensor highlighted in red. Right click this and select “view in browser” to see instrument information and download data files. Select “open in command mode” to control the instrument and conduct bench tests.</li>
+</ol>
+<p>The Signature Deployment software expects sensors from the Signature range but has the capability to interact with the glider mounted AD2CP. Using this software it is possible to communicate with the AD2CP via a terminal emulator, download files from the AD2CP and start recording data. Data visualization/interpretation is not supported as of September 2020.</p>
+<h3 id="bench-test-the-ad2cp">Bench test the AD2CP</h3>
+<p>For ease of reading I have printed all commands in <strong>BOLD UPPERCASE</strong> the AD2CP itself is not case sensitive.</p>
+<ol type="1">
+<li>Open the command window as detailed above and send the following commands:</li>
+<li><strong>INQ</strong> to check the glider is in state 002 ready to receive commands. Otherwise see instrument states below.</li>
+<li><strong>LISTFILES</strong> to see what’s already on the memory card.</li>
+<li><strong>SETDEFAULT,ALL</strong> a good place to start. This sets all AD2CP recording settings to their default values. No AD2CP data files will be affected.</li>
+<li><strong>SETPLAN,FN=“sensible_filename.ad2cp”</strong> so you don’t overwrite pre-existing files as the previous command sets default filename Data.ad2cp. Must use the .ad2cp file extension.</li>
+<li>Change other variables as you see fit, there are some suggestions later in this guide.</li>
+<li><strong>SAVE,ALL</strong> to test if your configuration is possible with the instrument. If this returns <strong>OK</strong> you can deploy, otherwise <strong>GETERROR</strong> will tell you which settings are incompatible. It’s a good idea to <strong>SAVE,ALL</strong> after each variable you change to save yourself more difficult changes in the event of an error.</li>
+<li><strong>START</strong> this will put the instrument in record mode. Leave it to collect data.</li>
+<li>To finish recording, use the buttons “send break” and “switch to command mode” or send keyboard commands <strong>CTRL-C</strong> then <strong>MC</strong></li>
+</ol>
+<h3 id="instrument-modes">Instrument modes</h3>
+<figure>
+<img src="./images/AD2CP_modes.png" alt="AD2CP_modes" /><figcaption aria-hidden="true">AD2CP_modes</figcaption>
+</figure>
+<p>A schematic of the core states of the instrument and the commands to switch between them from the Integrator’s Guide</p>
+<figure>
+<img src="images/mode_numbers.png" alt="mode_numbers" /><figcaption aria-hidden="true">mode_numbers</figcaption>
+</figure>
+<p>Numerical codes for the AD2CP states from the Integrator’s Guide. This is the number returned after sending the <strong>INQ</strong> command.</p>
+<h3 id="a-sample-plan-for-a-glider-deployment-as-used-in-tank-testing">A sample plan for a glider deployment, as used in tank testing</h3>
+<p><strong>SETDEFAULT,ALL </strong></p>
+<p><strong>SETPLAN,FN=“2018_09_05_TANKTEST1.AD2CP”</strong></p>
+<p><strong>SETPLAN,MIAVG=30</strong></p>
+<p><strong>SETAVG,AI=2 </strong></p>
+<p><strong>SETAVG,NC=15 </strong></p>
+<p><strong>SETAVG,CS=2.0, </strong></p>
+<p><strong>SETAVG,NPING=8</strong></p>
+<p><strong>START</strong></p>
+<p>This will record a profile every 30 s averaging 8 pings over a two second period and recording 15 cells of 2 m size.</p>
+<h3 id="handy-commands">Handy commands</h3>
+<p>Commands for parameters typically have three key options “get” for the present setting “getlim” for the acceptable range of values and “set” to assign a new value to a parameter. To confuse things, parameters are grouped into a number of categories which must be stated when interrogating that parameter. e.g. to interrogate the cell size <strong>CS</strong> parameter for the average profile use: <strong>GETAVG,CS</strong> to find its present value <strong>GETAVGLIM,CS</strong> to find the accepted range of cell size values and <strong>SETAVG,CS</strong> to set a new value for cell size. Values such as file name are controlled through the group “<strong>PLAN</strong>” rather than “<strong>AVG</strong>”</p>
+<p>General commands:</p>
+<ul>
+<li><strong>BBPWAKEUP</strong> when connected to instrument so it will receive commands.</li>
+<li><strong>INQ</strong> get glider state. Glider must be in mode 002 to receive other commands.</li>
+<li><strong>GETSTATE</strong> for more detailed info than <strong>INQ</strong> regarding deployment time etc.</li>
+<li><strong>GETPLAN</strong> for details on the deployment plan, including the filename for data.</li>
+<li><strong>GETPLAN1</strong> for the alternate plan parameters (these parameters set to 0 by default).</li>
+<li><strong>GETALL</strong> and <strong>GETALLLIM</strong> for most parameters and their ranges of accepted values.</li>
+<li><strong>GETPRECISION</strong>/<strong>GETPRECISION1</strong> for precision in burst and avg mode (cm/s) for plan 0/plan 1.</li>
+<li><strong>RECSTAT</strong> for recorder (memory card) information, free blocks etc.</li>
+<li><strong>LISTFILES</strong> list all files on the memory card.</li>
+<li><strong>GETCLOCKSTR</strong> to get the clock. This syncs from the glider clock on each dive.</li>
+<li><strong>SETTMAVG</strong> for averaging of profiles. used for returning snippet files.</li>
+<li><strong>ERASE,9999</strong> Wipe the recorder before deployment. This will also reset any plans loaded. Make sure you copied ALL the data you need before using this.</li>
+</ul>
+<h3 id="on-data-limit-formats-values-returned-by-getlim-commands">On data limit formats (values returned by “getlim” commands)</h3>
+<p>The limits for the various arguments are returned as a list of valid values, and/or ranges, enclosed in parenthesis (). An empty list, (), is used for arguments that are unused/not yet implemented. Square brackets [] signify a range of valid values that includes the listed values. String arguments are encapsulated with “”, like for normal parameter handling. A semicolon ; is used as separator between limits and values. The argument format can also be inferred from the limits, integer values are shown without a decimal point, floating point values are shown with a decimal point and strings are either shown with the string specifier, “”, or as a range of characters using ‘’ for specifying a character. Examples: [1;128] – Integer value, valid from 1 to 128. ([1300.00;1700.00];0.0) – Floating point value, valid values are 0.0 and the range from 1300.00 to 1700.00. ([‘0’;‘9’];[‘a’;‘z’];[‘A’;‘Z’];‘.’) – String argument with valid characters being . and the character ranges a-z, A-Z, 0-9. (“BEAM”) – String argument with BEAM being the only valid string. (0;1) – Integer value with two valid values, 0 and 1.</p>
+<h3 id="clearing-up-confusion">Clearing up confusion</h3>
+<ul>
+<li><strong>SETPLAN,MIAVG</strong> is the time period between successive average measurements. <strong>SETAVG,AI</strong> is the time interval over which the measurements are averaged. So setting setplan,miavg=20 and setavg,ai=5 will have the sensor measure for 5 seconds in every 20 and average data over each 5 second measurement interval.</li>
+<li>The .ad2cp files store all the variables that the AD2CP was set to during recording, so there is no need to record what commands you sent to the instrument.</li>
+<li>The AD2CP will only use 3 beams at once, you must set the vertical direction to avoid disappointment! The glider will do this automatically when performing (sim) dives, but for bench tests you must change it manually with <strong>SETPLAN,VD</strong></li>
+<li>If a co-ordinate system other than <strong>BEAM</strong> is set (e.g. <strong>XYZ</strong>), the AD2CP will convert to this system at time of recording. This conversion is very difficult to undo and an error in the compass/tilt sensor could really mess with your data. Nortek recommend recording in BEAM mode and carrying out any coordinate transformations in post processing.</li>
+</ul>
+<h3 id="burst-vs-avg-and-the-two-plans">Burst vs avg and the two plans</h3>
+<p>The AD2CP can run two average and burst plans concurrently so many parameters have four settings, <strong>SETBURST</strong> for burst mode in plan 0, <strong>SETAVG</strong> for average mode in plan 0 and <strong>SETBURST1</strong>, <strong>SETAVG1</strong> for the same parameters in plan 1. See the Integrator’s guide for more detail.</p>
+<h3 id="what-to-do-if-the-ad2cp-demands-a-password">What to do if the AD2CP demands a password</h3>
+<p>The AD2CP occasionally requires a login, usually after being left powered on with no input. The details should be</p>
+<p>Signature Username: nortek Password: (blank) or Signature Username: nortek Password: nortek</p>
+<p>If neither of these work, temporarily interrupting the power supply and restarting Signature Deployment will get you back in. This does stop the AD2CP from recording data. The password can be reset when connected via ethernet.</p>
+<h3 id="miscellaneous-handy-info">Miscellaneous handy info</h3>
+<p>When connected to power, a steady blue light on the AD2CP indicates that it is drawing power and not actively recording. When deployed, the light blinks when it sends out an acoustic ping, there is a quiet but audible click.</p>
+<p>Tests shows the clock drifts at approx 1 sec/week. However the clock syncs with the Seaglider’s clock at the start of every profile, so this should not be an issue.</p>
+<p>The AD2CP has a 16GB memory card</p>
+<p>The AD2CP does not have</p>
+<ul>
+<li>vertical beam</li>
+<li>bottom tracking</li>
+<li>pulse coherence</li>
+<li>onboard power</li>
+</ul>
+<h3 id="controlling-the-ad2cp-through-the-seaglider">Controlling the AD2CP through the Seaglider</h3>
+<p>This requires three things:</p>
+<ol type="1">
+<li>Seaglider must be using the main.run variant called EAGLCP, this is a version of firmware 66.12 Eagleray. This firmware version solves some timing issues that Clownfish has with the AD2CP as well as an issue in Clownfish where the AD2CP was turning the wrong beams on and off during ascent and descent. For further details contact Hydroid.</li>
+<li>The file ncp.cnf must be loaded to the glider memory card and stripped. This contains low level commands for the glider-AD2CP interface</li>
+<li>The file NCP_GO must be present on the basestation and the settings stipulated in it MUST be valid for the AD2CP, i.e. the AD2CP does not return an error when you try to do a bench test with these settings. This file can be updated during a deployment to change the AD2CP settings.</li>
+</ol>
+<p>Note: the NCP_GO file supplied by Elizabeth Creed in September 2018 is rejected by the glider with settmavg,cn=“ENU” the coordinates must be “BEAM”. This only affects the snippet files anyway.</p>
+<p>To toggle the return of snippet files (approx 8Kb per dive) in the cmdfile use the command $CP_XMITPROFILE in the cmdfile. $CP_XMITPROFILE,1 to turn on snippet files or $CP_XMITPROFILE,0 to turn off.</p>
+<h5 id="telemetrysnippet-files">Telemetry/snippet files</h5>
+<p>If telemetry is enabled the glider will send back snippet files over Iridium. Once all the parts are collected two files will be generated for each dive cpNNNNau.r for the dive and cpNNNNbu.r for the climb where NNNN is the four digit dive number.</p>
+<p>This same file is then seemingly duplicated in pcp637NNNNa.dat</p>
+<p>The telemetry files are chunked into repeating blocks</p>
+<p>The first row of each block</p>
+<p>$PNORI1,4,100476,3,15,0.30,2.00,ENU*0F</p>
+<p>specifies the number of beams, instrument serial number, number of beams in use, number of cells, blanking distance, cell size and coordinate system of snippet file data.</p>
+<p>The second row</p>
+<p>$PNORS1,112318,113108,0,2A4C0002,13.8,1497.3,0.00,226.4,18.0,0.00,-1.5,0.00,63.305,0.00,11.83*7F</p>
+<p>Specifies more constants including sound speed, temp?, pitch and roll? [will investigate]</p>
+<p>After this there are multiple rows beginnig $PNORC1, one for each sample taken.</p>
+<p>$PNORC1,112318,113108,1,2.3,0.083,0.113,-0.039,64.0,63.3,63.4,86,82,75*5D</p>
+<p>With the example NCP_GO file included with this manual, the rows of the telemetry files are as follows: date (mmddyy), time (hhmmss), cell number, cell distance from transducer, vel head 1, vel head2, vel head3, return amp head 1, return amp head 2, return amp head 3, correlation head 1, correlation head 2, correlation head 3.</p>
+<p>The python script <strong>tele_checker.py</strong> plots the beam correlation and return amplitude for each sample and each cell and produces plots for QC.</p>
+<h6 id="further-snippet-files-details">Further snippet files details</h6>
+<p>These settings can be changed with <strong>SETTMAVG</strong> and the following arguments can be specified:</p>
+<ul>
+<li><strong>EN</strong> Enable Averaging Mode Telemetry 1 to enable, 0 to disable</li>
+<li><strong>CD</strong> Cells Divisor</li>
+<li><strong>PD</strong> Packets Divisor</li>
+<li><strong>AVG</strong> Average Telemetry Data</li>
+<li><strong>TV</strong> Store Velocity</li>
+<li><strong>TA</strong> Store Amplitude</li>
+<li><strong>TC</strong> Store Correlation</li>
+<li><strong>CY</strong> Coordinate System</li>
+<li><strong>FO</strong> Enable File Output</li>
+<li><strong>SO</strong> Enable Serial Output</li>
+<li><strong>DF</strong> Data format <strong>Do not change!</strong></li>
+</ul>
+<h3 id="scientific-guidance">Scientific guidance</h3>
+<p>Average mode is best for shear velocity information. Low power consumption and good data quality can be achieved using the settings suggested by Creed or Rudnick (see NCP_GO files included in repo). Burst mode is geared toward measurements of turbulence, this is more power hungry and will fill up the memory card faster.</p>
+<h3 id="interesting-excerpts-from-the-adcp-integrator-manual-last-updated-oct-2017.-comments-added-in-italics">Interesting excerpts from the ADCP Integrator manual, last updated Oct 2017. Comments added in italics</h3>
+<p>The AD2CP uses a two-processor (DSP) design; one dedicated to Doppler processing (BBP) and the other to Interface (SEC). The primary interface is Ethernet, so the Interface processor is only powered when external power is applied. Note that powering through the Ethernet cable will also power the rest of the electronics. <em>All you need to do to test the sensor is plug in the powered Ethernet cable</em></p>
+<p>In addition to the traditional serial port interface for real time data output there are several options for communication over Ethernet. The Ethernet communication is handled by a dedicated processor in the instrument. This network processor runs a Linux operating system, which makes it possible to connect to the instrument via telnet, raw connections and FTP. <em>I have not succeed with a raw telnet communication yet. Only with the dedicated Nortek terminal emulation. It should be possible though. This would be useful as Nortek software is windows only</em></p>
+<p>Comms with serial commands:</p>
+<ul>
+<li>ASCII based and line oriented. Commands are terminated with CR/LF</li>
+<li>A single command can be used to retrieve the complete configuration of the instrument with optional output to file GETALL this will return some errors as the custom glider AD2CP lacks some of the functionality of the Signature 1000 such as a vertical beam. Don’t panic, your sensor is fine*</li>
+<li>There are commands to set default parameters <em>principally SETDEFAULT,ALL. Though more specific commands exist</em></li>
+</ul>
+<p>Our use of the telemetry term implies a “subset transfer system”, that is, storing a subset of data for transfer over low-bandwidth links (for example over iridium links, acoustic modems, etc). The telemetry file is typically used in cases where the integrator either does not have the processing power or bandwidth (if only a low data rate serial port is available) to do the processing themselves. <em>So you can send snippet files over Iridium</em></p>
+<p>The SETALTERNATE/GETALTERNATE command allows two different configurations to be run consecutively in time. The primary configuration (defined by SETPLAN, SETBURST, SETAVG, SETTMAVG, SETBT) is run for “PLAN” seconds, after which the unit powers down for a given period of time (“IDLE” seconds). The alternate configuration (defined by SETPLAN1, SETBURST1, SETAVG1, SETTMAVG1, SETBT1) is then run for “PLAN1” seconds and the unit powers down for “IDLE1” seconds. The configuration is then switched back to the primary and the process is repeated. The valid range for the various arguments should be verified using the GETALTERNATELIM command. Note that the filename in setplan and setplan1 must be the same</p>
+<h3 id="data-analysis-options">Data analysis options</h3>
+<p>The free Nortek software <strong>SignatureViewer</strong> will display data and show you that the sensor is recording at the intervals you set. However, it does not process the three beams correctly as it expects four beam input. You can use SignatureViewer to export data files as ntk and then view them with another program.</p>
+<p><strong>Nortek MIDAS</strong> will read .adcp files and convert them to netCDF4, matlab or csv format. It will also convert to and replay ntk files.</p>
+<p>Nortek’s propietary <strong>OceanContour</strong> apparently can read the AD2CP data, but costs over £1000. The author has not tried it.</p>
+<h5 id="how-to-export-the-.ad2cp-files-for-analysis">How to export the .ad2cp files for analysis</h5>
+<ol type="1">
+<li>Open Nortek Midas</li>
+<li>In the Data menu use the option “AD2CP to ntk” to convert your binary ad2cp file to a re-playable ntk.</li>
+<li>In the same Data menu there are tools for exporting these ntk files to netCDF4, Matlab and ASCII format.</li>
+<li>The netCDF4 files can be read into python with the netCDF4 library. An example script is available at</li>
+</ol>
+<p>https://github.com/callumrollo/adcp-glider</p>
+<p>This guide is a work in progress. Please direct any questions/recommendations to Callum Rollo</p>
+<p>c.rollo@uea.ac.uk<br />
+c.rollo@outlook.com</p>
