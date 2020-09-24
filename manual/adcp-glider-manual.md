@@ -101,6 +101,8 @@ General commands:
 - **SETTMAVG** for averaging of profiles. used for returning snippet files.
 - **ERASE,9999** Wipe the recorder before deployment. This will also reset any plans loaded. Make sure you copied ALL the data you need before using this.
 
+n.b. **GETALL** will return some errors as the custom glider AD2CP lacks some of the functionality of the Signature 1000 such as a vertical beam. Don't panic, your sensor is fine. 
+
 ### On data limit formats (values returned by "getlim" commands)
 
 The limits for the various arguments are returned as a list of valid values, and/or ranges, enclosed in parenthesis (). An empty list, (), is used for arguments that are unused/not yet implemented. Square brackets [] signify a range of valid values that includes the listed values. String arguments are encapsulated with “”, like for normal parameter handling. A semicolon ; is used as separator between limits and values. The argument format can also be inferred from the limits, integer values are shown without a decimal point, floating point values are shown with a decimal point and strings are either shown with the string specifier, “”, or as a range of characters using ‘’ for specifying a character.
@@ -210,22 +212,13 @@ These settings can be changed with **SETTMAVG** and the following arguments can 
 
 Average mode is best for shear velocity information. Low power consumption and good data quality can be achieved using the settings suggested by Creed or Rudnick (see NCP_GO files included in repo). Burst mode is geared toward measurements of turbulence, this is more power hungry and will fill up the memory card faster.
 
-### Interesting excerpts from the ADCP Integrator manual, last updated Oct 2017. Comments added in italics
+### Useful excerpts from the ADCP Integrator manual, last updated Oct 2017. Comments added in italics
 
-The AD2CP uses a two-processor (DSP) design; one dedicated to Doppler processing (BBP) and the other to Interface (SEC). The primary interface is Ethernet, so the Interface processor is only powered when external power is applied. Note that powering through the Ethernet cable will also power the rest of the electronics. *All you need to do to test the sensor is plug in the powered Ethernet cable* 
+"The AD2CP uses a two-processor (DSP) design; one dedicated to Doppler processing (BBP) and the other to Interface (SEC). The primary interface is Ethernet, so the Interface processor is only powered when external power is applied. Note that powering through the Ethernet cable will also power the rest of the electronics." *All you need to do to test the sensor is plug in the powered Ethernet cable* 
 
-In addition to the traditional serial port interface for real time data output there are several options for communication over Ethernet. The Ethernet communication is handled by a dedicated processor in the instrument. This network processor runs a Linux operating system, which makes it possible to connect to the instrument via telnet, raw connections and FTP. *I have not succeed with a raw telnet communication yet. Only with the dedicated Nortek terminal emulation. It should be possible though. This would be useful as Nortek software is windows only* 
+"In addition to the traditional serial port interface for real time data output there are several options for communication over Ethernet. The Ethernet communication is handled by a dedicated processor in the instrument. This network processor runs a Linux operating system, which makes it possible to connect to the instrument via telnet, raw connections and FTP." *I have not succeed with a raw telnet communication yet. Only with the dedicated Nortek terminal emulation. It should be possible though. This would be useful as Nortek software is MS Windows only* 
 
-Comms with serial commands:
-
-- ASCII based and line oriented. Commands are terminated with CR/LF
-- A single command can be used to retrieve the complete configuration of the instrument with
-  optional output to file GETALL this will return some errors as the custom glider AD2CP lacks some of the functionality of the Signature 1000 such as a vertical beam. Don't panic, your sensor is fine* 
-- There are commands to set default parameters *principally SETDEFAULT,ALL. Though more specific commands exist* 
-
-Our use of the telemetry term implies a "subset transfer system", that is, storing a subset of data for transfer over low-bandwidth links (for example over iridium links, acoustic modems, etc). The telemetry file is typically used in cases where the integrator either does not have the processing power or bandwidth (if only a low data rate serial port is available) to do the processing themselves. *So you can send snippet files over Iridium*
-
-The SETALTERNATE/GETALTERNATE command allows two different configurations to be run consecutively in time. The primary configuration (defined by SETPLAN, SETBURST, SETAVG, SETTMAVG, SETBT) is run for “PLAN” seconds, after which the unit powers down for a given period of time (“IDLE” seconds). The alternate configuration (defined by SETPLAN1, SETBURST1, SETAVG1, SETTMAVG1, SETBT1) is then run for “PLAN1” seconds and the unit powers down for “IDLE1” seconds. The configuration is then switched back to the primary and the process is repeated. The valid range for the various arguments should be verified using the GETALTERNATELIM command.  Note that the filename in setplan and setplan1 must be the same
+"The SETALTERNATE/GETALTERNATE command allows two different configurations to be run consecutively in time. The primary configuration (defined by SETPLAN, SETBURST, SETAVG, SETTMAVG, SETBT) is run for “PLAN” seconds, after which the unit powers down for a given period of time (“IDLE” seconds). The alternate configuration (defined by SETPLAN1, SETBURST1, SETAVG1, SETTMAVG1, SETBT1) is then run for “PLAN1” seconds and the unit powers down for “IDLE1” seconds. The configuration is then switched back to the primary and the process is repeated. The valid range for the various arguments should be verified using the GETALTERNATELIM command.  Note that the filename in setplan and setplan1 must be the same"
 
 ### Data analysis options
 
@@ -240,10 +233,48 @@ Nortek's propietary **OceanContour** apparently can read the AD2CP data, but cos
 1. Open Nortek Midas
 2. In the Data menu use the option "AD2CP to ntk" to convert your binary ad2cp file to a re-playable ntk.
 3. In the same Data menu there are tools for exporting these ntk files to netCDF4, Matlab and ASCII format.
-4. The netCDF4 files can be read into python with the netCDF4 library. An example script is available at
+4. The netCDF4 files are open source standards that can be read into a number of programes with the netCDF4 library.
 
-https://github.com/callumrollo/adcp-glider
+## Data analysis
 
+All the following examples are excerpts from the repository
+
+https://github.com/callumrollo/adcp-glider/
+
+All code is published open source under GPLv3. Some of it is even documented and tested. Feel free to take it, remix and redistribute it.
+
+The repo is built on Python functions and takes as input the netcdf files converted from .ad2cp files and optionally the netcdf from 
+
+
+### Bench tests
+ 
+ A number of bench tests are recommended before deploying the ADCP glider. Particularly after making any changes to the AD2CP or glider firmware.
+
+#### Physically test transducers
+
+Rationale: At least one Seaglider firmware version (66.12 Dorado) had an error that suplied the opposite orientation parameter to the AD2CP during dive and climb phases. This caused the incorrect beam to be switched off, though the AD2CP sent out pings and recorded data as normal. To test that the AD2CP is behaving as expected, I recommend you physically test the transducers during a sim dive.
+
+This can be acomplished by the simple expedient of a water filled nitrile glove and a timing source. 
+
+![Glove test photo](images/glove_test.jpeg)
+
+Be sure that your timing source matches the AD2CP. The simplest way to acomplish this is to conduct a sim dive after the glider has synced its clock to GPS and use a similarly synced source. +/1 a second is good enough.
+
+1. Set the AD2CP up to record every 15 seconds (see example above) using the NCP_GO file on the basestation.
+1. Start the glider on a sim dive to at lest 30 m, to ensure a long enough time series for recording.
+1. Fill a nitrile glove with water and place it over each transducer head in turn, recording the timing of each placement. I suggest moving the glove every 30 seconds.
+1. Once the sim dive is finished, turn off the glider and recover the data.
+1. Plot the data up and compare to the timing of when each transducer was covered. Covering the transdcucer with a water filled glove significantly increases the return amplitude of the signal, in comparison to the other transducers that are firing in air. (See the example at [make this link to the notebook itself](https://github.com/callumrollo/adcp-glider/).
+1. One transducer will not fire, check this is the correct one. For optimum data collection, the aft facing trasducer should be switched off during the dive, the fore facing transducer should be switched off during the climb.
+
+![Results of transducer tests](images/transducer_tests.png)
+Example result of the above procedure when used to test a firmware fix. Under the old Dorado firmware (top row) the fore facing beam was switched off during the dive and the aft facing beam was switched off during ascent, the oposite behaviour to what was desired. The issue was fixed with the Eaglecp firmware (bottom row).
+
+### Tank tests
+
+ 
+ 
+-----------------------------------
 This guide is a work in progress. Please direct any questions/recommendations to Callum Rollo
 
  c.rollo@uea.ac.uk  
