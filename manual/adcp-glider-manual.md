@@ -12,7 +12,7 @@ support@nortekgroup.com
 
 seaglidersupport@hydroid.com
 
-### To start the AD2CP for bench testing you will need:
+## To start the AD2CP for bench testing you will need:
 
 - **AD2CP  Signature Deployment and MIDAS software** 
 
