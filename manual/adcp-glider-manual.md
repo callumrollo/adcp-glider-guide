@@ -1,10 +1,10 @@
 # Quick Start Guide Seaglider AD2CP
 
-Last updated September 2020. For the most recent version and link to supporting software and documentation visit:
+Last updated October 2020. For the most recent version and link to supporting software and documentation visit:
 
 https://github.com/callumrollo/adcp-glider-guide
 
-This informal guide was compiled using information from the Nortek Signature manuals, in particular the Integrator's Guide, correspondence with Nortek and Seaglider support teams (now Hydroid, previously Kongsberg) support teams, published data from previous integrations on the Seaglider and Spray platforms, and personal experience working with the system 2018-2020. This guide comes with no warranty, guarantees of competence, or support. In following this guide you may irreparably damage your glider, sensor, computer, lab, person etc. The author assumes no responsibility. Please don't sue me, I'm poor. 
+This informal guide was compiled using information from the Nortek Signature manuals, in particular the Integrator's Guide, correspondence with Nortek and Seaglider (now Hydroid, previously Kongsberg) support teams, published data from previous integrations on the Seaglider and Spray platforms, and personal experience working with the system 2018-2020. This guide comes with no warranty, guarantees of competence, or support. In following this guide you may irreparably damage your glider, sensor, computer, lab, person etc. The author assumes no responsibility. Please don't sue me, I'm poor.
 
 For qualified and competent tech support contact:
 
@@ -137,7 +137,7 @@ Password: nortek
 
 If neither of these work, temporarily interrupting the power supply and restarting Signature Deployment will get you back in. This does stop the AD2CP from recording data. The password can be reset when connected via ethernet.
 
-### Miscellaneous handy info
+### Miscellaneous handy information
 
 When connected to power, a steady blue light on the AD2CP indicates that it is drawing power and not actively recording.  When deployed, the light blinks when it sends out an acoustic ping, there is a quiet but audible click.
 
@@ -151,6 +151,14 @@ The AD2CP does not have
 - bottom tracking
 - pulse coherence
 - onboard power
+
+### Useful excerpts from the ADCP Integrator manual, last updated Oct 2017. Comments added in italics
+
+"The AD2CP uses a two-processor (DSP) design; one dedicated to Doppler processing (BBP) and the other to Interface (SEC). The primary interface is Ethernet, so the Interface processor is only powered when external power is applied. Note that powering through the Ethernet cable will also power the rest of the electronics." *All you need to do to test the sensor is plug in the powered Ethernet cable* 
+
+"In addition to the traditional serial port interface for real time data output there are several options for communication over Ethernet. The Ethernet communication is handled by a dedicated processor in the instrument. This network processor runs a Linux operating system, which makes it possible to connect to the instrument via telnet, raw connections and FTP." *I have not succeed with a raw telnet communication yet. Only with the dedicated Nortek terminal emulation. It should be possible though. This would be useful as Nortek software is MS Windows only* 
+
+"The SETALTERNATE/GETALTERNATE command allows two different configurations to be run consecutively in time. The primary configuration (defined by SETPLAN, SETBURST, SETAVG, SETTMAVG, SETBT) is run for “PLAN” seconds, after which the unit powers down for a given period of time (“IDLE” seconds). The alternate configuration (defined by SETPLAN1, SETBURST1, SETAVG1, SETTMAVG1, SETBT1) is then run for “PLAN1” seconds and the unit powers down for “IDLE1” seconds. The configuration is then switched back to the primary and the process is repeated. The valid range for the various arguments should be verified using the GETALTERNATELIM command.  Note that the filename in setplan and setplan1 must be the same" *SETALTERNATE is potentially useful but quite confusing. Caution recommended if using this functionality*
 
 ### Controlling the AD2CP through the Seaglider
 
@@ -166,35 +174,53 @@ To toggle the return of snippet files (approx 8Kb  per dive) in the cmdfile use 
 
 ##### Telemetry/snippet files
 
-If telemetry is enabled the glider will send back snippet files over Iridium. Once all the parts are collected two files will be generated for each dive cpNNNNau.r for the dive and cpNNNNbu.r for the climb where NNNN is the four digit dive number. 
+If telemetry is enabled, the glider will send back snippet files over Iridium. Once all the parts are collected two files will be generated for each dive cpNNNNau.r for the dive and cpNNNNbu.r for the climb, where NNNN is the four digit dive number. 
 
-This same file is then seemingly duplicated in pcp637NNNNa.dat
+This data is then combined in pcp637NNNNa.dat
 
-The telemetry files are chunked into repeating blocks
+The telemetry files are chunked into repeating blocks of NMEA messages.
 
-The first row of each block
+The first row of each block specifies the number of beams, instrument serial number, number of beams in use, number of cells, blanking distance, cell size and coordinate system of snippet file data.
 
-$PNORI1,4,100476,3,15,0.30,2.00,ENU*0F 
+`$PNORI1,4,100476,3,15,0.30,2.00,ENU*0F`
 
- specifies the number of beams, instrument serial number, number of beams in use, number of cells, blanking distance, cell size and coordinate system of snippet file data.
+These NMEA strings consist of three parts:
+1.  `$PNORI1` is the "talker". In this case `P` identifies a proprietary system `NOR` is the identifier for Nortek and `I1` is the Nortek code for this message string. 
+2.  `4,100476,3,15,0.30,2.00,ENU` The comma separated values are the values of parameters specified by the manufacturer for this message type, identified by their position. Where data are not available, an empty space is left e.g.`4,100476,,,0.30,,ENU` such that position is not lost.
+3. `*0F`is an optional checksum in hexadecimal, calculated by bitwise exclusive OR of the ASCII characters between the `$` and `*`
 
-The second row 
+For more information on NMEA, see the pdf guide from the pynmea2 library https://github.com/Knio/pynmea2/blob/master/NMEA0183.pdf
 
-$PNORS1,112318,113108,0,2A4C0002,13.8,1497.3,0.00,226.4,18.0,0.00,-1.5,0.00,63.305,0.00,11.83*7F
+The second row:
 
-Specifies more constants including sound speed, temp?, pitch and roll? [will investigate]
+`$PNORS1,112318,113108,0,2A4C0002,13.8,1497.3,0.00,226.4,18.0,0.00,-1.5,0.00,63.305,0.00,11.83*7F`
 
-After this there are multiple rows beginnig $PNORC1, one for each sample taken.
+Specifies more constants including sound speed and temperature.
 
-$PNORC1,112318,113108,1,2.3,0.083,0.113,-0.039,64.0,63.3,63.4,86,82,75*5D
+After this there are multiple rows beginning $PNORC1, one for each sample taken.
 
- With the example NCP_GO file included with this manual, the rows of the telemetry files are as follows: date (mmddyy), time (hhmmss), cell number, cell distance from transducer, vel head 1, vel head2, vel head3, return amp head 1, return amp head 2, return amp head 3, correlation head 1, correlation head 2, correlation head 3. 
+`$PNORC1,112318,113108,1,2.3,0.083,0.113,-0.039,64.0,63.3,63.4,86,82,75*5D`
 
-The python script **tele_checker.py** plots the beam correlation and return amplitude for each sample and each cell and produces plots for QC.
+ The columns of this data following the talker string are as follows: date (mmddyy), time (hhmmss), cell number, cell distance from transducer, vel head 1, vel head2, vel head3, return amp head 1, return amp head 2, return amp head 3, correlation head 1, correlation head 2, correlation head 3. Distance in m, Speed in m/s, amplitude in dB, correlation in %.
+ 
+The python script `tele_checker.py` reads these text files and plots the beam amplitude and correlation for each dive in groups of 10 ensembles. Each plot typically covers 40 -60 minutes of data. These plots are saved as in png format with file names `tele_amp_NNNN_X.png` and `tele_cor_NNNN_X.png` where NNNN is the dive number and X the chunk number. Examples from EUREC4A of good data:
+
+![adcp_snippet_correlation](images/tele_cor_0004_1.png)
+
+**Snippet files correlations**: Good correlations are in blue, we expect good correlation out to 10 m at least. Range may be less in low scattering however. The first cell often has a lower correlation, possibly due to ringing.
+
+![adcp_snippet_return_amp](images/tele_amp_0004_1.png)
+
+**Snippet files amplitudes**: Amplitude drops off rapidly with distance, this is raw return amp not gain adjusted so this is expected. Check to make sure all three heads report similar return amps.
+
+The script also produces average plots using all the snippet file data in the folder.
+
+Call `tele_checker.py` from the terminal using `python telechecker.py -p 'path-to-your-adcp-snippet-files`. Make sure that the Python libraries required by the script are in your shell path. Snippet files can be processed automatically by adding this command to a glider's `.logout` file. The script checks for existing figures, so only new snippet files and average data are processed.
+
 
 ###### Further snippet files details
 
-These settings can be changed with **SETTMAVG** and the following arguments can be specified:
+These settings for snippet files can be changed with **SETTMAVG** and the following arguments can be specified:
 
 - **EN** Enable Averaging Mode Telemetry 1 to enable, 0 to disable
 - **CD** Cells Divisor
@@ -208,15 +234,6 @@ These settings can be changed with **SETTMAVG** and the following arguments can 
 - **SO** Enable Serial Output
 - **DF** Data format **Do not change!**
 
-
-
-### Useful excerpts from the ADCP Integrator manual, last updated Oct 2017. Comments added in italics
-
-"The AD2CP uses a two-processor (DSP) design; one dedicated to Doppler processing (BBP) and the other to Interface (SEC). The primary interface is Ethernet, so the Interface processor is only powered when external power is applied. Note that powering through the Ethernet cable will also power the rest of the electronics." *All you need to do to test the sensor is plug in the powered Ethernet cable* 
-
-"In addition to the traditional serial port interface for real time data output there are several options for communication over Ethernet. The Ethernet communication is handled by a dedicated processor in the instrument. This network processor runs a Linux operating system, which makes it possible to connect to the instrument via telnet, raw connections and FTP." *I have not succeed with a raw telnet communication yet. Only with the dedicated Nortek terminal emulation. It should be possible though. This would be useful as Nortek software is MS Windows only* 
-
-"The SETALTERNATE/GETALTERNATE command allows two different configurations to be run consecutively in time. The primary configuration (defined by SETPLAN, SETBURST, SETAVG, SETTMAVG, SETBT) is run for “PLAN” seconds, after which the unit powers down for a given period of time (“IDLE” seconds). The alternate configuration (defined by SETPLAN1, SETBURST1, SETAVG1, SETTMAVG1, SETBT1) is then run for “PLAN1” seconds and the unit powers down for “IDLE1” seconds. The configuration is then switched back to the primary and the process is repeated. The valid range for the various arguments should be verified using the GETALTERNATELIM command.  Note that the filename in setplan and setplan1 must be the same"
 
 ----------------------
 
@@ -284,11 +301,15 @@ Example result of the above procedure when used to test a firmware fix. Under th
 
 ### Tank tests
 
+It is recommended to carry out the above tests in a tank prior to deploying the glider. Testing is a tank will test that the four transducers record a similar signal return in water. If ther signal return differs by more than a few decibels, this could be a sign of a damaged transducer. Due to the amount of acoustic ringing in a tank, the measurements of water velocity reported will not be reliable.
  
  
 -----------------------------------
 This guide is a work in progress. Please direct any questions/recommendations to Callum Rollo
 
- c.rollo@uea.ac.uk  
- c.rollo@outlook.com
+ *firstnameinitial.lastname*@uea.ac.uk 
+ 
+ *firstnameinitial.lastname*@outlook.com 
+ 
+ Or submit an issue/pull request on Github
 
