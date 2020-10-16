@@ -246,8 +246,8 @@ During deployment, the glider should be kept within an attitude envelope that or
 
 This vertical beam miss can be calculated using functions in the adcp-glider repo. Here is an example of the attitude effects on vertical beam miss at 15 m from the glider, assuming 2 m bin size.
 
-![beam miss](images/beam_mapping.png)
-![beam miss baR](images/beam_map_bar.png)
+![beam miss](images/beam_miss.png)
+
 
 I recommend using a large bin size or 2 m to ensure sufficient scatterers in each bin for reliable measurements. If a smaller bin is used, the glider attitude must be more tightly controlled.
 

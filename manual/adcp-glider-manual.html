@@ -161,7 +161,9 @@
 <p>Average mode is best for shear velocity information. Low power consumption and good data quality can be achieved by averaging every 15 or 30 seconds using 4 or 8 ensembles. Burst mode is geared toward measurements of turbulence. This is more power hungry and will fill up the memory card faster. Burst mode allows more pings per second.</p>
 <p>During deployment, the glider should be kept within an attitude envelope that orients the three operating transducers at similar angles from the vertical. If the glider pitches or rolls outside of the envelope, the beams will sample water parcels at different depths. The AD2CP does not actively resample by changing time gating of data recording as some other ADCPs do.</p>
 <p>This vertical beam miss can be calculated using functions in the adcp-glider repo. Here is an example of the attitude effects on vertical beam miss at 15 m from the glider, assuming 2 m bin size.</p>
-<p><img src="images/beam_mapping.png" alt="beam miss" /> <img src="images/beam_map_bar.png" alt="beam miss baR" /></p>
+<figure>
+<img src="images/beam_miss.png" alt="beam miss" /><figcaption aria-hidden="true">beam miss</figcaption>
+</figure>
 <p>I recommend using a large bin size or 2 m to ensure sufficient scatterers in each bin for reliable measurements. If a smaller bin is used, the glider attitude must be more tightly controlled.</p>
 <p>I recommend recording in glider coordinates (BEAM). The conversions to XYZ and ENU rely on the AD2CP’s attitude sensors. If there is an error with these, it is difficult to recover the original AD2CP data. Conversely, the conversion from glider coordinates to XYZ or ENU is trivial. Functions in the linked repository perform this conversion.</p>
 <h3 id="data-analysis-options">Data analysis options</h3>
