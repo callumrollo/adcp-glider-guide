@@ -1,3 +1,6 @@
+[![DOI](https://zenodo.org/badge/298024499.svg)](https://zenodo.org/badge/latestdoi/298024499)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 # Seaglider Nortek 1MHz AD2CP unofficial guide
 
 This an unofficial guide to bench testing, deploying and analysing the data from a Nortek AD2CP integrated onto a Seaglider.
