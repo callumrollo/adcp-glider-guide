@@ -177,7 +177,7 @@ This requires three things:
 2. The file ncp.cnf must be loaded to the glider memory card and stripped. This contains low level commands for the glider-AD2CP interface
 3. The file NCP_GO must be present on the basestation and the settings stipulated in it must be valid for the AD2CP, i.e. the AD2CP does not return an error when you try to do a bench test with these settings. This file can be updated during a deployment to change the AD2CP settings.
 
-Note: the NCP_GO file supplied by Elizabeth Creed in September 2018 is rejected by the glider with settmavg,cn="ENU" the coordinates must be "BEAM". This only affects the coordinate system of velocity data in the telemetry snippet files.
+Note: the NCP_GO file supplied by Elizabeth Creed in September 2018 is rejected by the glider with settmavg,cy="ENU". The coordinates must be set to "BEAM". This only affects the coordinate system of velocity data in the telemetry snippet files.
 
 To toggle the return of snippet files (approx 8Kb  per dive), use the command $CP\_XMITPROFILE in the cmdfile on the glider base staion. $CP\_XMITPROFILE,1 to turn on snippet files or $CP\_XMITPROFILE,0 to turn off.
 
