@@ -260,6 +260,8 @@ I recommend using a large bin size or 2 m to ensure sufficient scatterers in eac
 
 I recommend recording in glider coordinates (BEAM). The conversions to XYZ and ENU rely on the AD2CP's attitude sensors. If there is an error with these, it is difficult to recover the original AD2CP data. Conversely, the conversion from glider coordinates to XYZ or ENU is trivial. Functions in the linked repository perform this conversion.
 
+Unless you erase the recorder immediatly before deployment (not recommended) data from self tests and sim dives will be retained in the data files. The simplest way to remove these is to apply a time filter after importing the data, removing all pre-deplyment ADCP data.
+
 
 ### Data analysis options
 

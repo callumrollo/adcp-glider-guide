@@ -1,17 +1,18 @@
 <h1 id="quick-start-guide-seaglider-ad2cp">Quick Start Guide Seaglider AD2CP</h1>
-<p>Last updated October 2020. For the most recent version and link to supporting software and documentation visit:</p>
+<p>Last updated October 2020. For the most recent version, telemetry scripts, and links to supporting software and documentation visit:</p>
 <p>https://github.com/callumrollo/adcp-glider-guide</p>
-<p>This informal guide was compiled using information from the Nortek Signature manuals, in particular the Integrator’s Guide, correspondence with Nortek and Seaglider (now Hydroid, previously Kongsberg) support teams, published data from previous integrations on the Seaglider and Spray platforms, and personal experience working with the system 2018-2020. This guide comes with no warranty, guarantees of competence, or support. In following this guide you may irreparably damage your glider, sensor, computer, lab, person etc. The author assumes no responsibility. Please don’t sue me, I’m poor.</p>
+<p>This informal guide was compiled using information from the Nortek Signature manuals, in particular the Integrator’s Guide, correspondence with Nortek and Seaglider (now Hydroid, previously Kongsberg) support teams, published data from previous integrations on the Seaglider and Spray platforms, and personal experience working with the system 2018-2020. This guide comes with no warranty, guarantees of competence, or support. In following this guide you may irreparably damage your glider, sensor, computer, lab, person etc. The author assumes no responsibility. See licence file for full details. Please don’t sue me, I’m poor.</p>
 <p>For qualified and competent tech support contact:</p>
 <p>support@nortekgroup.com</p>
 <p>seaglidersupport@hydroid.com</p>
 <h2 id="to-the-bench">To the bench</h2>
-<p>To connect to the AD2CP for bench testing you will require</p>
+<p>To connect to the AD2CP for bench testing you will require:</p>
 <ul>
 <li><strong>AD2CP Signature Deployment and MIDAS software</strong></li>
 </ul>
 <p>https://www.nortekgroup.com/software (software is Windows only as of October 2020)</p>
 <ul>
+<li><p><strong>A Windows computer with an ethernet port</strong></p></li>
 <li><p><strong>AD2CP manuals “Signature Operations” and “AD2CP Integrator’s Guide”</strong></p>
 <p>https://www.nortekgroup.com/manuals-quick-guides</p></li>
 <li><p><strong>Powered ethernet to standard subsea 8 pin cable</strong> this is included in the glider case</p></li>
@@ -19,14 +20,14 @@
 <p>The Nortek website is the authoritative source for all information regarding the AD2CP and should be checked for the latest software and manuals.</p>
 <h3 id="connect-to-the-ad2cp">Connect to the AD2CP</h3>
 <ol type="1">
-<li>Ensure that both glider and ethernet cable are powered <strong>off</strong>. It is not necessary to disconnect the AD2CP to glider serial cable at the port marked “R”</li>
-<li>Remove the dummy plug and connect the 8 pin cable to the starboard port of the AD2CP, the port is marked “E” for ethernet. <strong>Note</strong> the serial and ethernet ports on the glider AD2CP are the opposite way round to that shown in the Signature 1000 guide.</li>
+<li>Ensure that both glider and AD2CP ethernet cable are powered <strong>off</strong>. It is not necessary to disconnect the AD2CP to glider serial cable at the port marked “R”</li>
+<li>Remove the dummy plug and connect the 8 pin subsea connector to the starboard port of the AD2CP, the port is marked “E” for ethernet. <strong>Note</strong> the serial and ethernet ports on the glider AD2CP are the opposite way round to that shown in the Signature 1000 guide.</li>
 <li>Connect the ethernet cable to your windows computer.</li>
 <li>Connect the power supply and power the cable. The ethernet port on your computer should light up. The blue light between the transducers on the AD2CP should turn on.</li>
 <li>Open the Signature Deployment software and wait 1-2 minutes for the AD2CP to assign an IP address.</li>
 <li>In Signature Deployment select menu option “Discover,” you should see a line of data appear with the sensor highlighted in red. Right click this and select “view in browser” to see instrument information and download data files. Select “open in command mode” to control the instrument and conduct bench tests.</li>
 </ol>
-<p>The Signature Deployment software expects sensors from the Signature range but has the capability to interact with the glider mounted AD2CP. Using this software it is possible to communicate with the AD2CP via a terminal emulator, download files from the AD2CP and start recording data. Data visualization/interpretation is not supported as of September 2020.</p>
+<p>The Signature Deployment software expects sensors from the Nortek Signature range but has the capability to interact with the glider mounted AD2CP. Using this software it is possible to communicate with the AD2CP via a terminal emulator, download files from the AD2CP and start recording data. Data visualization/interpretation is not supported as of September 2020.</p>
 <h3 id="bench-test-the-ad2cp">Bench test the AD2CP</h3>
 <p>For ease of reading I have printed all commands in <strong>BOLD UPPERCASE</strong> the AD2CP itself is not case sensitive.</p>
 <ol type="1">
@@ -36,7 +37,7 @@
 <li><strong>SETDEFAULT,ALL</strong> a good place to start. This sets all AD2CP recording settings to their default values. No AD2CP data files will be affected.</li>
 <li><strong>SETPLAN,FN=“sensible_filename.ad2cp”</strong> so you don’t overwrite pre-existing files. The previous command sets default filename Data.ad2cp. You must specify the .ad2cp file extension.</li>
 <li>Change other variables as you see fit, there are some suggestions later in this guide.</li>
-<li><strong>SAVE,ALL</strong> to test if your configuration is possible with the instrument. If this returns <strong>OK</strong> you can deploy, otherwise <strong>GETERROR</strong> will tell you which settings are incompatible. It’s a good idea to <strong>SAVE,ALL</strong> after each variable you change to save yourself more difficult changes in the event of an error.</li>
+<li><strong>SAVE,ALL</strong> to test if your configuration is possible with the instrument. If this returns <strong>OK</strong> you can deploy, otherwise <strong>GETERROR</strong> will tell you which settings are incompatible. It’s a good idea to <strong>SAVE,ALL</strong> after each variable you change to ensure you entered a compatible value.</li>
 <li><strong>START</strong> this will put the instrument in record mode. Leave it to collect data.</li>
 <li>To finish recording, use the GUI buttons “send break” and “switch to command mode” or send keyboard commands <strong>CTRL-C</strong> then <strong>MC</strong></li>
 </ol>
@@ -44,11 +45,42 @@
 <figure>
 <img src="images/AD2CP_modes.png" alt="AD2CP_modes" /><figcaption aria-hidden="true">AD2CP_modes</figcaption>
 </figure>
-<p>A schematic of the core states of the instrument and the commands to switch between them from the Integrator’s Guide</p>
-<figure>
-<img src="images/mode_numbers.png" alt="mode_numbers" /><figcaption aria-hidden="true">mode_numbers</figcaption>
-</figure>
-<p>Numerical codes for the AD2CP states from the Integrator’s Guide. This is the number returned after sending the <strong>INQ</strong> command.</p>
+<p>A schematic of the core states of the instrument and the commands to switch between them. Adapted from the Nortek AD2CP Integrator’s Guide.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Mode number</th>
+<th style="text-align: left;">Instrument Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0000</td>
+<td style="text-align: left;">Bootloader/firmware upgrade</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0001</td>
+<td style="text-align: left;">Measurement</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0002</td>
+<td style="text-align: left;">Command</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0004</td>
+<td style="text-align: left;">Data retrieval</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0005</td>
+<td style="text-align: left;">Confirmation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0006</td>
+<td style="text-align: left;">FTP-mode</td>
+</tr>
+</tbody>
+</table>
+<p>Numerical codes for the AD2CP states. This is the number returned after sending the <strong>INQ</strong> command. Adapted from the Nortek AD2CP Integrator’s Guide</p>
 <h3 id="a-sample-plan-for-a-glider-deployment-as-used-in-tank-testing">A sample plan for a glider deployment, as used in tank testing</h3>
 <p><strong>SETDEFAULT,ALL </strong></p>
 <p><strong>SETPLAN,FN=“todays_date_and_start_time_TANKTEST.AD2CP”</strong></p>
@@ -97,7 +129,7 @@
 <p>When connected to power, a steady blue light on the AD2CP indicates that it is drawing power and not actively recording. When deployed, the light blinks when it sends out an acoustic ping, there is a quiet but audible click.</p>
 <p>Tests shows the clock drifts at approx 1 sec/week. However the AD2CP clock syncs with the Seaglider clock at the start of every profile, so this should not be an issue.</p>
 <p>The AD2CP has a 16GB memory card</p>
-<p>The AD2CP does not have</p>
+<p>The AD2CP does not have:</p>
 <ul>
 <li>a vertical beam</li>
 <li>bottom tracking</li>
@@ -105,30 +137,29 @@
 <li>onboard power</li>
 <li>active beam remapping</li>
 </ul>
-<h3 id="useful-excerpts-from-the-adcp-integrator-manual-last-updated-oct-2017.-comments-added-in-italics">Useful excerpts from the ADCP Integrator manual, last updated Oct 2017. Comments added in italics</h3>
-<p>“In addition to the traditional serial port interface for real time data output there are several options for communication over Ethernet. The Ethernet communication is handled by a dedicated processor in the instrument. This network processor runs a Linux operating system, which makes it possible to connect to the instrument via telnet, raw connections and FTP.” <em>I have not succeeded to make a raw telnet connection yet, it should be possible though. This would be useful as Nortek software is Windows only.</em></p>
-<p>“The SETALTERNATE/GETALTERNATE command allows two different configurations to be run consecutively in time. The primary configuration (defined by SETPLAN, SETBURST, SETAVG, SETTMAVG, SETBT) is run for “PLAN” seconds, after which the unit powers down for a given period of time (“IDLE” seconds). The alternate configuration (defined by SETPLAN1, SETBURST1, SETAVG1, SETTMAVG1, SETBT1) is then run for “PLAN1” seconds and the unit powers down for “IDLE1” seconds. The configuration is then switched back to the primary and the process is repeated. The valid range for the various arguments should be verified using the GETALTERNATELIM command. Note that the filename in setplan and setplan1 must be the same" <em>SETALTERNATE is potentially useful but quite confusing. Once can run two completely different recording plans in alternating time segments. Caution recommended if using this functionality</em></p>
+<p>The ethernet comm port connetcs to a dedicated Linux processor. This can handle connections over telnet, raw connection and FTP. It should be possible to connect to the instrument this way, without using Nortek’s dedicated software if needed.</p>
+<p>Using <strong>SETEALTERNATE</strong> you can run two completely independent AD2CP setups in tandem. The primary configuration runs for <strong>PLAN</strong> seconds, the unit then powers down for <strong>IDLE</strong> seconds. The secondary configuration runs for <strong>PLAN1</strong> seconds followed by an idle period of <strong>IDLE1</strong> seconds. The process the repeats. All data are recorded to the same file to the filename <strong>FN</strong> in <strong>SETPLAN</strong> and <strong>SETPLAN1</strong> must be the same The valid range for the various arguments should be verified using the GETALTERNATELIM command. <strong>SETALTERNATE</strong> is potentially useful but quite confusing. One can run two completely different recording plans in alternating time segments. Caution is recommended if using this functionality, consult the Integrator’s Guide for more detail.</p>
 <h2 id="controlling-the-ad2cp-through-the-seaglider">Controlling the AD2CP through the Seaglider</h2>
 <p>This requires three things:</p>
 <ol type="1">
-<li>Seaglider must be using the main.run variant that works with the Nortek AD2CP. I recommend EAGLCP, this is a version of firmware 66.12 Eagleray. This firmware version solves some timing issues that Clownfish has with the AD2CP as well as an issue in Dorado where the AD2CP was turning the wrong beams on and off during ascent and descent. For further details contact Hydroid.</li>
+<li>Seaglider must be using a main.run variant that works with the Nortek AD2CP. I recommend EAGLCP, this is a version of firmware 66.12 Eagleray. This firmware version solves some timing issues that Clownfish has with the AD2CP as well as an issue in Dorado where the AD2CP was turning the wrong beams on and off during ascent and descent. For further details contact Hydroid support.</li>
 <li>The file ncp.cnf must be loaded to the glider memory card and stripped. This contains low level commands for the glider-AD2CP interface</li>
-<li>The file NCP_GO must be present on the basestation and the settings stipulated in it MUST be valid for the AD2CP, i.e. the AD2CP does not return an error when you try to do a bench test with these settings. This file can be updated during a deployment to change the AD2CP settings.</li>
+<li>The file NCP_GO must be present on the basestation and the settings stipulated in it must be valid for the AD2CP, i.e. the AD2CP does not return an error when you try to do a bench test with these settings. This file can be updated during a deployment to change the AD2CP settings.</li>
 </ol>
-<p>Note: the NCP_GO file supplied by Elizabeth Creed in September 2018 is rejected by the glider with settmavg,cn=“ENU” the coordinates must be “BEAM”. This only affects the snippet files anyway.</p>
+<p>Note: the NCP_GO file supplied by Elizabeth Creed in September 2018 is rejected by the glider with settmavg,cy=“ENU”. The coordinates must be set to “BEAM”. This only affects the coordinate system of velocity data in the telemetry snippet files.</p>
 <p>To toggle the return of snippet files (approx 8Kb per dive), use the command $CP_XMITPROFILE in the cmdfile on the glider base staion. $CP_XMITPROFILE,1 to turn on snippet files or $CP_XMITPROFILE,0 to turn off.</p>
 <h3 id="telemetrysnippet-files">Telemetry/snippet files</h3>
-<p>If telemetry is enabled, the glider will send back snippet files over Iridium. Once all the parts are collected two files will be generated for each dive cpNNNNau.r for the dive and cpNNNNbu.r for the climb, where NNNN is the four digit dive number. This data are then combined in pcp637NNNNa.dat</p>
-<p>The telemetry files are made up of repeating blocks of NMEA messages. The first row of each block specifies the number of beams, instrument serial number, number of beams in use, number of cells, blanking distance, cell size and coordinate system of snippet file data.</p>
+<p>If telemetry is enabled, the glider will send back snippet files over Iridium. Once all the parts are uploaded to the basestation, two files will be generated for each dive cpNNNNau.r for the dive and cpNNNNbu.r for the climb, where NNNN is the four digit dive number. These data are then combined in pcp637NNNNa.dat</p>
+<p>The telemetry files are made up of repeating blocks of National Marine Electronics Association (NMEA) 0183 messages. The first row of each block specifies the instrument type (4=Signature), instrument serial number, number of beams in use, number of cells, blanking distance, cell size and coordinate system of snippet file data.</p>
 <p><code>$PNORI1,4,100476,3,15,0.30,2.00,ENU*0F</code></p>
 <p>These NMEA strings consist of three parts: 1. <code>$PNORI1</code> is the “talker”. In this case <code>P</code> identifies a proprietary system <code>NOR</code> is the identifier for Nortek and <code>I1</code> is the Nortek code for this message string. 2. <code>4,100476,3,15,0.30,2.00,ENU</code> The comma separated values are the values of parameters specified by the manufacturer for this message type, identified by their position. Where data are not available, an empty space is left e.g.<code>4,100476,,,0.30,,ENU</code> such that position is not lost. In this case the values are number of transducers on instrument, instrument serial number, number of beams recording, number of cells, blanking distance (m), cell size (m) and coordinate reference frame. 3. <code>*0F</code>is an optional checksum in hexadecimal, calculated by bitwise exclusive OR of the ASCII characters between the <code>$</code> and <code>*</code></p>
-<p>For more information on NMEA, see the pdf guide from the pynmea2 library https://github.com/Knio/pynmea2/blob/master/NMEA0183.pdf</p>
+<p>For more information on NMEA, see the pdf guide from the pynmea2 library https://github.com/Knio/pynmea2/blob/master/NMEA0183.pdf this package performs a number of useful functions, including checksum calculation and NMEA string parsing.</p>
 <p>The second row:</p>
 <p><code>$PNORS1,112318,113108,0,2A4C0002,13.8,1497.3,0.00,226.4,18.0,0.00,-1.5,0.00,63.305,0.00,11.83*7F</code></p>
-<p>Specifies more constants including sound speed and temperature.</p>
+<p>Specifies more constants: date (mmddyy), time (hhmmss), error code, status code, battery voltage (V), sound speed (m/s), heading standard deviation (deg) heading (deg), pitch (deg), pitch standard deviation (deg), roll (deg), roll standard deviation (deg), pressure (dBar), pressure standard deviation (dBar), temperature (C).</p>
 <p>After this there are multiple rows beginning $PNORC1, one for each sample taken.</p>
 <p><code>$PNORC1,112318,113108,1,2.3,0.083,0.113,-0.039,64.0,63.3,63.4,86,82,75*5D</code></p>
-<p>The columns of this data following the talker string are as follows: date (mmddyy), time (hhmmss), cell number, cell distance from transducer, vel head 1, vel head2, vel head3, return amp head 1, return amp head 2, return amp head 3, correlation head 1, correlation head 2, correlation head 3. Distance in m, Speed in m/s, amplitude in dB, correlation in %.</p>
+<p>The columns of this data following the talker string are as follows: date (mmddyy), time (hhmmss), cell number, cell distance from transducer, velocity head 1, velocity head 2, velocity head 3, return amp head 1, return amp head 2, return amp head 3, correlation head 1, correlation head 2, correlation head 3. Distance in m, velocity in m/s, amplitude in dB, correlation in %.</p>
 <p>The python script <code>tele_checker.py</code> reads these text files and plots the beam amplitude and correlation for each dive in groups of 10 ensembles. Each plot typically covers 40 - 60 minutes of data. These plots are saved as in png format with file names <code>tele_amp_NNNN_X.png</code> and <code>tele_cor_NNNN_X.png</code> where NNNN is the dive number and X the chunk number. Plots below show examples from a deployment in oligotrophic waters with good quality data.</p>
 <figure>
 <img src="images/tele_cor_0004_1.png" alt="adcp_snippet_correlation" /><figcaption aria-hidden="true">adcp_snippet_correlation</figcaption>
@@ -137,7 +168,7 @@
 <figure>
 <img src="images/tele_amp_0004_1.png" alt="adcp_snippet_return_amp" /><figcaption aria-hidden="true">adcp_snippet_return_amp</figcaption>
 </figure>
-<p><strong>Snippet files amplitudes</strong>: Amplitude drops off rapidly with distance, this is raw return amp not gain adjusted so this is expected. Check to make sure all three heads report similar return amps.</p>
+<p><strong>Snippet files amplitudes</strong>: Amplitude drops off rapidly with distance, this is raw return amp not gain adjusted so this is expected. Check to make sure all three heads report similar return amps. Return amp is dependant on amount of suitable size scatterers in the water column. As a result, it will decrease in clear oligotrophic water.</p>
 <p>The script also produces average plots using all the snippet file data in the folder.</p>
 <p>Call <code>tele_checker.py</code> from the terminal using <strong>python telechecker.py -p ‘path-to-your-adcp-snippet-files’</strong>. Make sure that the Python libraries required by the script are in your shell path. Snippet files can be processed automatically by adding this command to a glider’s <code>.logout</code> file. The script checks for existing figures, so only new snippet files and average data are processed. If you wish to force reprocessing, remove the figures from the directory before calling the script.</p>
 <h3 id="further-snippet-files-details">Further snippet files details</h3>
@@ -166,6 +197,7 @@
 </figure>
 <p>I recommend using a large bin size or 2 m to ensure sufficient scatterers in each bin for reliable measurements. If a smaller bin is used, the glider attitude must be more tightly controlled.</p>
 <p>I recommend recording in glider coordinates (BEAM). The conversions to XYZ and ENU rely on the AD2CP’s attitude sensors. If there is an error with these, it is difficult to recover the original AD2CP data. Conversely, the conversion from glider coordinates to XYZ or ENU is trivial. Functions in the linked repository perform this conversion.</p>
+<p>Unless you erase the recorder immediatly before deployment (not recommended) data from self tests and sim dives will be retained in the data files. The simplest way to remove these is to apply a time filter after importing the data, removing all pre-deplyment ADCP data.</p>
 <h3 id="data-analysis-options">Data analysis options</h3>
 <p>The free Nortek software <strong>SignatureViewer</strong> will display data and show you that the sensor is recording at the intervals you set. However, it does not process the three beams correctly as it expects four beam input. You can use SignatureViewer to export data files as ntk and then view them with another program.</p>
 <p><strong>Nortek MIDAS</strong> will read .adcp files and convert them to netCDF4, matlab or csv format. It will also convert to and replay ntk files.</p>
